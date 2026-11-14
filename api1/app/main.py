@@ -1,0 +1,149 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
+import structlog
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.config.settings import settings
+from app.core.exceptions.handlers import register_exception_handlers
+from app.core.middleware import (
+    LoggingMiddleware,
+    RateLimitMiddleware,
+    RequestIDMiddleware,
+    ResponseEnvelopeMiddleware,
+    SecurityHeadersMiddleware,
+)
+
+logger = structlog.get_logger()
+
+
+def create_app() -> FastAPI:
+    from app.models import register_all_models
+
+    register_all_models()
+
+    app = FastAPI(
+        title=settings.APP_NAME,
+        version=settings.APP_VERSION,
+        debug=settings.APP_DEBUG,
+        lifespan=lifespan,
+        docs_url="/docs" if not settings.is_production else None,
+        redoc_url="/redoc" if not settings.is_production else None,
+        openapi_url="/openapi.json" if not settings.is_production else None,
+    )
+
+    _register_middleware(app)
+    _register_routers(app)
+    register_exception_handlers(app)
+
+    if settings.PROMETHEUS_ENABLED:
+        from prometheus_fastapi_instrumentator import Instrumentator
+
+        Instrumentator().instrument(app).expose(app, endpoint="/metrics")
+
+    return app
+
+
+def _register_middleware(app: FastAPI) -> None:
+    from starlette.middleware.gzip import GZipMiddleware
+
+    app.add_middleware(SecurityHeadersMiddleware)
+    app.add_middleware(RequestIDMiddleware)
+    app.add_middleware(ResponseEnvelopeMiddleware)
+    app.add_middleware(RateLimitMiddleware)
+    app.add_middleware(LoggingMiddleware)
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(o) for o in settings.CORS_ORIGINS],
+        allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+
+def _register_routers(app: FastAPI) -> None:
+    from app.admin.setup import setup_admin
+    from app.api.router import api_router
+
+    app.include_router(api_router)
+    # Add session middleware required by sqladmin
+    from starlette.middleware.sessions import SessionMiddleware
+
+    app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+    setup_admin(app)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    _configure_logging()
+    if settings.OTEL_ENABLED:
+        _configure_otel()
+    if settings.SENTRY_DSN:
+        _configure_sentry()
+    await logger.ainfo(
+        "app_started", env=settings.APP_ENV, version=settings.APP_VERSION
+    )
+    try:
+        yield
+    finally:
+        from app.config.database import engine
+        from app.services.integrations.ninja_client import close_ninja_client
+
+        await engine.dispose()
+        await close_ninja_client()
+        await logger.ainfo("app_stopped")
+
+
+def _configure_logging() -> None:
+    import logging
+
+    structlog.configure(
+        processors=[
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.add_log_level,
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.dev.ConsoleRenderer()
+            if settings.is_development
+            else structlog.processors.JSONRenderer(),
+        ],
+        wrapper_class=structlog.make_filtering_bound_logger(
+            logging.getLevelName(settings.APP_LOG_LEVEL.upper())
+        ),
+        context_class=dict,
+        logger_factory=structlog.PrintLoggerFactory(),
+    )
+
+
+def _configure_otel() -> None:
+    from opentelemetry import trace
+    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+    provider = TracerProvider()
+    provider.add_span_processor(
+        BatchSpanProcessor(
+            OTLPSpanExporter(endpoint=settings.OTEL_EXPORTER_OTLP_ENDPOINT)
+        )
+    )
+    trace.set_tracer_provider(provider)
+    FastAPIInstrumentor().instrument()
+    SQLAlchemyInstrumentor().instrument()
+
+
+def _configure_sentry() -> None:
+    import sentry_sdk
+
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        traces_sample_rate=settings.SENTRY_TRACES_SAMPLE_RATE,
+        environment=settings.APP_ENV,
+        release=settings.APP_VERSION,
+    )
+
+
+app = create_app()

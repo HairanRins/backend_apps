@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# uv
+
+# Testing
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+docker/postgres/dumps/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Agent tooling (personal files only)
+.claude/settings.local.json
+.mcp.local.json
+
+# App
+uploads/
+logs/
+*.log
+/models/
+
+# Docs
+docs/openapi.json

@@ -166,6 +166,16 @@ export const mailerOptions: MailerOptions = {
   },
 };
 
+function canUsePinoPretty(): boolean {
+  try {
+    require.resolve('pino-pretty');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+
 export const pinoOptions = ({ ignorePaths }: { ignorePaths: string[] }) => ({
   pinoHttp: {
     level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
@@ -174,17 +184,16 @@ export const pinoOptions = ({ ignorePaths }: { ignorePaths: string[] }) => ({
     },
     customSuccessMessage: responseLogMessage,
     customErrorMessage: responseLogMessage,
-    transport:
-      process.env.NODE_ENV !== 'production'
-        ? {
-            target: 'pino-pretty',
-            options: {
-              singleLine: false,
-              translateTime: 'SYS:standard',
-              colorize: true,
-              ignore: 'req,res,responseTime',
-            } satisfies PrettyOptions,
-          }
-        : undefined,
+        transport: canUsePinoPretty()
+      ? {
+          target: 'pino-pretty',
+          options: {
+            singleLine: false,
+            translateTime: 'SYS:standard',
+            colorize: true,
+            ignore: 'req,res,responseTime',
+          } satisfies PrettyOptions,
+        }
+      : undefined,
   },
 });

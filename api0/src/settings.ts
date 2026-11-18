@@ -3,7 +3,7 @@ import type { CorsOptions } from '@nestjs/common/internal';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import type { HelmetOptions } from 'helmet';
 import { relations } from './db/relations';
-import { migrate } from 'drizzle-orm/pg-core';
+// import { migrate } from 'drizzle-orm/pg-core';
 import { JwtModuleOptions } from '@nestjs/jwt';
 import ms, { StringValue } from 'ms';
 import { ThrottlerModuleOptions } from '@nestjs/throttler';
@@ -107,7 +107,7 @@ export const helmetOptions: HelmetOptions = {
 export const loadDrizzle = (
   env: 'test' | 'default' = 'default',
 ): DrizzleModuleAsyncOptions => ({
-  useFactory: async () => {
+  useFactory: () => {
     const db = drizzle(
       env === 'default'
         ? process.env.DATABASE_URL!
@@ -115,14 +115,21 @@ export const loadDrizzle = (
       { relations },
     );
 
-    await migrate([], db, { migrationsFolder: '../drizzle' });
     return { db };
   },
 });
 
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET is required in production');
+  }
+  return secret ?? 'secret';
+}
+
 export const jwtSettings: JwtModuleOptions = {
   global: true,
-  secret: process.env.JWT_SECRET ?? 'secret',
+  secret: getJwtSecret(),
   signOptions: {
     expiresIn: (process.env.JWT_EXPIRES as StringValue) ?? '1h',
   },
@@ -132,7 +139,8 @@ export const throttlerSettings: ThrottlerModuleOptions = [
   {
     name: 'default',
     ttl: 60000,
-    limit: ms('1m'),
+    // limit: ms('1m'),
+    limit: 100
   },
 ];
 
@@ -166,14 +174,17 @@ export const pinoOptions = ({ ignorePaths }: { ignorePaths: string[] }) => ({
     },
     customSuccessMessage: responseLogMessage,
     customErrorMessage: responseLogMessage,
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        singleLine: false,
-        translateTime: 'SYS:standard',
-        colorize: true,
-        ignore: 'req,res,responseTime',
-      } satisfies PrettyOptions,
-    },
+    transport:
+      process.env.NODE_ENV !== 'production'
+        ? {
+            target: 'pino-pretty',
+            options: {
+              singleLine: false,
+              translateTime: 'SYS:standard',
+              colorize: true,
+              ignore: 'req,res,responseTime',
+            } satisfies PrettyOptions,
+          }
+        : undefined,
   },
 });

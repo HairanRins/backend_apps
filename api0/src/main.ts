@@ -33,7 +33,15 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   if (process.env.NODE_ENV === 'development')
-    SwaggerModule.setup('docs', app, document);
+    if (process.env.NODE_ENV === 'development')
+  SwaggerModule.setup('docs', app, document, {
+    customCssUrl:
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css',
+    customJs: [
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js',
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js',
+    ],
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

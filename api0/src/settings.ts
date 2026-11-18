@@ -97,9 +97,9 @@ export const helmetOptions: HelmetOptions = {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: [`'self'`],
-      styleSrc: [`'self'`],
+      styleSrc: [`'self'`, `'unsafe-inline'`, 'https://cdn.jsdelivr.net'],
       imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-      scriptSrc: [`'self'`],
+      scriptSrc: [`'self'`, 'https://cdn.jsdelivr.net'],
     },
   },
 };

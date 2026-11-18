@@ -18,8 +18,8 @@ async function bootstrap() {
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
-    .setTitle('NestJS Drizzle Template API')
-    .setDescription('API documentation for NestJS Drizzle Template')
+    .setTitle('My Apps API')
+    .setDescription('API documentation for My Apps')
     .setVersion('1.2')
     .addBearerAuth(
       {

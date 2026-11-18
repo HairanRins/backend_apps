@@ -3,15 +3,17 @@
   "version": "1.2.0",
   "description": "My Apps",
   "author": "Rins Andrianina",
-  "type": "module",
   "license": "MIT",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/src/main",
+    "start:prod": "node dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./test/jest.json",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./test/jest.json --watch",

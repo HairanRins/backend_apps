@@ -10,11 +10,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import type { RequestAuthorized } from '@/auth/auth.service';
+import type { RequestAuthorized } from '../auth/auth.service';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
-import { Roles } from '@/auth/roles/role.decorator';
-import { Role } from '@/db/schema';
-import { UuidValidatorPipe } from '@/common/pipes/uuid-validator/uuid-validator.pipe';
+import { Roles } from '../auth/roles/role.decorator';
+import { Role } from '../db/schema';
+import { UuidValidatorPipe } from '../common/pipes/uuid-validator/uuid-validator.pipe';
 import {
   ApiTags,
   ApiOperation,

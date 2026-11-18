@@ -5,7 +5,7 @@ import {
   PipeTransform,
 } from '@nestjs/common';
 import { isUUID } from 'class-validator';
-import { InvalidUUIDException } from '@/common/exceptions/uuid-validator.exceptions';
+import { InvalidUUIDException } from '../../exceptions/uuid-validator.exceptions';
 
 export const validateUUID = (...uuids: string[]) => {
   for (const uuid of uuids) {

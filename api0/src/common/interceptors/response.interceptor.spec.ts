@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { Role, User } from '@/db/schema';
+import { Role, User } from '../../db/schema';
 import { ResponseInterceptor } from './response.interceptor';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { CallHandler, ExecutionContext } from '@nestjs/common';

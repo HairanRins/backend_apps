@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TokenCleanupService } from './token-cleanup.service';
-import { DrizzleService } from '@/db/drizzle.service';
+import { DrizzleService } from '../../db/drizzle.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 describe('TokenCleanupService', () => {

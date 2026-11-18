@@ -4,16 +4,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserService } from '@/user/user.service';
+import { UserService } from '../user/user.service';
 import { compare } from 'bcrypt';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { AuthDTO } from './auth.dto';
-import { RefreshToken, refreshTokens, Role, type User } from '@/db/schema';
+import { RefreshToken, refreshTokens, Role, type User } from '../db/schema';
 import ms, { StringValue } from 'ms';
 import crypto from 'node:crypto';
 import { and, eq } from 'drizzle-orm';
-import { DrizzleService } from '@/db/drizzle.service';
-import { validateUUID } from '@/common/pipes/uuid-validator/uuid-validator.pipe';
+import { DrizzleService } from '../db/drizzle.service';
+import { validateUUID } from '../common/pipes/uuid-validator/uuid-validator.pipe';
 
 export type JwtPayload = {
   sub: string;

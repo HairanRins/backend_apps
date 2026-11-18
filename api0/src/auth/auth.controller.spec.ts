@@ -5,8 +5,8 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { AuthGuard } from '@nestjs/passport';
 import { HttpAdapterHost } from '@nestjs/core';
 import type { Request, Response } from 'express';
-import { User, Role } from '@/db/schema';
-import { UserService } from '@/user/user.service';
+import { User, Role } from '../db/schema';
+import { UserService } from '../user/user.service';
 import { BadRequestException } from '@nestjs/common';
 
 describe('AuthController', () => {

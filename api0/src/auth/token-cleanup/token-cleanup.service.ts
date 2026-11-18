@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { refreshTokens } from '@/db/schema';
+import { refreshTokens } from '../../db/schema';
 import { lt } from 'drizzle-orm';
-import { DrizzleService } from '@/db/drizzle.service';
+import { DrizzleService } from '../../db/drizzle.service';
 
 @Injectable()
 export class TokenCleanupService {

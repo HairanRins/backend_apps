@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import type { Request } from 'express';
-import type { JwtPayload } from '@/auth/auth.service';
+import type { JwtPayload } from '../auth.service';
 import { IS_PUBLIC_KEY } from './public.decorator';
 
 @Injectable()

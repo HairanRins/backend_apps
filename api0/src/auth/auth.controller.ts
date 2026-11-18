@@ -16,7 +16,7 @@ import {
 import { AuthService, type RequestAuthorized } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
-import { Role, User } from '@/db/schema';
+import { Role, User } from '../db/schema';
 import { Public } from './jwt/public.decorator';
 import {
   ApiTags,
@@ -29,8 +29,8 @@ import {
 import ms, { StringValue } from 'ms';
 import { Throttle } from '@nestjs/throttler';
 import { HttpAdapterHost } from '@nestjs/core';
-import { UserService } from '@/user/user.service';
-import { CreateUserDTO } from '@/user/user.dto';
+import { UserService } from '../user/user.service';
+import { CreateUserDTO } from '../user/user.dto';
 
 class RegisterUserDTO extends PickType(CreateUserDTO, ['email', 'password']) {}
 

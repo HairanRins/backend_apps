@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { randomUUID } from 'crypto';
 import bcrypt from 'bcrypt';
-import { Role } from '@/db/schema';
-import { DrizzleService } from '@/db/drizzle.service';
+import { Role } from '../db/schema';
+import { DrizzleService } from '../db/drizzle.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 
 describe('UserService', () => {

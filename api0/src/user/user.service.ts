@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { validateUUID } from '@/common/pipes/uuid-validator/uuid-validator.pipe';
+import { validateUUID } from '../common/pipes/uuid-validator/uuid-validator.pipe';
 import { CreateUserDTO, UpdateUserDTO } from './user.dto';
 import { hash } from 'bcrypt';
-import { DrizzleService } from '@/db/drizzle.service';
-import { users } from '@/db/schema';
+import { DrizzleService } from '../db/drizzle.service';
+import { users } from '../db/schema';
 
 @Injectable()
 export class UserService {

@@ -2,11 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { UserService } from './user.service';
-import { JwtGuard } from '@/auth/jwt/jwt.guard';
+import { JwtGuard } from '../auth/jwt/jwt.guard';
 import { JwtService } from '@nestjs/jwt';
-import { Role, User } from '@/db/schema';
-import { RolesGuard } from '@/auth/roles/role.guard';
-import { RequestAuthorized } from '@/auth/auth.service';
+import { Role, User } from '../db/schema';
+import { RolesGuard } from '../auth/roles/role.guard';
+import { RequestAuthorized } from '../auth/auth.service';
 
 describe('UserController', () => {
   let controller: UserController;

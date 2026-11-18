@@ -7,7 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
-import { Role } from '@/db/schema';
+import { Role } from '../db/schema';
 
 export class CreateUserDTO {
   @ApiProperty({

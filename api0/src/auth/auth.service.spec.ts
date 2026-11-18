@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService, JwtPayload } from './auth.service';
-import { UserService } from '@/user/user.service';
+import { UserService } from '../user/user.service';
 import { JwtService, TokenExpiredError, JsonWebTokenError } from '@nestjs/jwt';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import bcrypt from 'bcrypt';
-import { DrizzleDatabase, Role, User } from '@/db/schema';
-import { DrizzleService } from '@/db/drizzle.service';
+import { DrizzleDatabase, Role, User } from '../db/schema';
+import { DrizzleService } from '../db/drizzle.service';
 import { randomUUID } from 'node:crypto';
 
 describe('AuthService', () => {

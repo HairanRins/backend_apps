@@ -3,7 +3,6 @@
   "version": "1.2.0",
   "description": "My Apps",
   "author": "Rins Andrianina",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "scripts": {
